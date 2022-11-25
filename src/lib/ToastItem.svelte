@@ -24,7 +24,6 @@
     aria-atomic="true"
     bind:this={toastLiveExample}
     data-bs-delay="1000"
-    data-bs-autohide="false"
   >
     <div class="toast-header">
       {#if isSuccessToast}
