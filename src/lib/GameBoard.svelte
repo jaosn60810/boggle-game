@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
 
   import { generateWordSearchPuzzle } from '../helpers/generateWordSearchPuzzle';
 
@@ -9,6 +9,8 @@
   import ClickedLetters from './ClickedLetters.svelte';
   import GameBoardLetter from './GameBoardLetter.svelte';
   import ToastItem from './ToastItem.svelte';
+
+  const dispatch = createEventDispatcher();
 
   const boggleGame = generateWordSearchPuzzle();
   const boggleGameletters = boggleGame.data.grid
@@ -54,6 +56,7 @@
     isSuccessToast = true;
     toastMessage = 'Keep Going ~ 🚀';
     $toastStore.show();
+    dispatch('resetTimer');
     $wordsStore = [...$wordsStore, word];
     clickedLetterIndexArray = [];
   }

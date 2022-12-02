@@ -4,7 +4,10 @@
   import SubmitWordList from './lib/SubmitWordList.svelte';
   import { getWordsFromGSheet } from './api/getWordsFromGSheet';
   import { generateWordSearchPuzzle } from './helpers/generateWordSearchPuzzle';
+  import Timer from './lib/Timer.svelte';
 
+  let countdown = 15;
+  let timerRef = null;
   onMount(async () => {
     // content here
     // console.log(await getWordsFromGSheet());
@@ -19,9 +22,24 @@
 <main class="container mb-3">
   <div class="row">
     <div class="col-md-6">
-      <GameBoard />
+      <div class="row">
+        <div class="col-md-6" />
+      </div>
+
+      <GameBoard
+        on:resetTimer={() => {
+          timerRef.handleReset();
+        }}
+      />
     </div>
     <div class="col-md-6">
+      <Timer
+        bind:this={timerRef}
+        on:new={() => {
+          countdown = null;
+        }}
+        {countdown}
+      />
       <SubmitWordList />
     </div>
   </div>
