@@ -2,13 +2,19 @@
   import { onMount } from 'svelte';
 
   import GameBoard from './lib/GameBoard.svelte';
+  import NewGameButton from './lib/NewGameButton.svelte';
+  import StartGameButton from './lib/StartGameButton.svelte';
   import SubmitWordList from './lib/SubmitWordList.svelte';
   import Timer from './lib/Timer.svelte';
 
   import boggleGameWords from './stores/boggleGameWords';
+  import wordsStore from './stores/wordsStore';
+
+  let timerRef;
+  let gameBoardRef;
 
   let countdown = 15;
-  let timerRef = null;
+
   let startGame = false;
 
   let voices = [];
@@ -24,9 +30,15 @@
     speechSynthesis.speak(utterance);
   }
 
-  function startGameFn() {
+  function handleStartGame() {
     startGame = true;
     play();
+  }
+
+  function handleNewGame() {
+    $wordsStore = [];
+    gameBoardRef.generateBoggleGame();
+    startGame = false;
   }
 
   onMount(async () => {
@@ -55,6 +67,7 @@
       </div>
 
       <GameBoard
+        bind:this={gameBoardRef}
         on:readNewWord={play}
         on:resetTimer={() => {
           timerRef.handleReset();
@@ -72,7 +85,15 @@
         />
       {/if}
 
-      <SubmitWordList on:startGame={startGameFn} />
+      {#if $wordsStore.length}
+        <SubmitWordList on:click={handleNewGame} />
+      {/if}
+
+      {#if !startGame}
+        <StartGameButton on:click={handleStartGame} />
+      {:else}
+        <NewGameButton on:click={handleNewGame} />
+      {/if}
     </div>
   </div>
 </main>

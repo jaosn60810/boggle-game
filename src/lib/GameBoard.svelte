@@ -13,23 +13,19 @@
 
   const dispatch = createEventDispatcher();
 
-  const boggleGame = generateWordSearchPuzzle();
-  const boggleGameletters = boggleGame.data.grid
-    .reduce((acc, cur) => [...acc, ...cur], [])
-    .map((word, index) => ({
-      letter: word,
-      xCoordinate: (index % boggleGame.settings.cols) + 1,
-      yCoordinate: Math.floor(index / boggleGame.settings.cols) + 1,
-    }));
-
-  $boggleGameWords = boggleGame.data.words.map((word) => word.clean);
-
-  console.log(boggleGame);
-
+  let boggleGame;
   let clickedLetterIndexArray = [];
   let toastMessage;
   let isSuccessToast;
   let initialGoingDirection;
+
+  generateBoggleGame();
+
+  export function generateBoggleGame() {
+    boggleGame = generateWordSearchPuzzle();
+    $boggleGameWords = boggleGame.data.words.map((word) => word.clean);
+    console.log(boggleGame);
+  }
 
   async function submitWord() {
     const word = clickedLettersArray.join('');
@@ -167,6 +163,14 @@
   $: clickedLettersArray = clickedLetterIndexArray.map(
     (clickedLetterIndex) => boggleGameletters[clickedLetterIndex].letter
   );
+
+  $: boggleGameletters = boggleGame.data.grid
+    .reduce((acc, cur) => [...acc, ...cur], [])
+    .map((word, index) => ({
+      letter: word,
+      xCoordinate: (index % boggleGame.settings.cols) + 1,
+      yCoordinate: Math.floor(index / boggleGame.settings.cols) + 1,
+    }));
 </script>
 
 <div class="d-flex flex-column align-items-center mb-3">

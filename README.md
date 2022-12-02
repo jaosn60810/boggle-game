@@ -42,6 +42,14 @@ If you have state that's important to retain within a component, consider creati
 ```js
 // store.js
 // An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+import { writable } from 'svelte/store';
+export default writable(0);
 ```
+
+## Related
+
+- [Svelte App - Speech Synthesis Api](https://www.youtube.com/watch?v=XDdKWOqCcZk&ab_channel=NoahGlaser)
+
+- [Svelte App - Countdown App](https://svelte.dev/repl/a19df6f013434e01bb990349843af288?version=3.38.2)
+
+- [word-search](https://www.npmjs.com/package/@blex41/word-search)
