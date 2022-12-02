@@ -1,6 +1,15 @@
 <script>
+  import { onMount } from 'svelte';
   import GameBoard from './lib/GameBoard.svelte';
   import SubmitWordList from './lib/SubmitWordList.svelte';
+  import { getWordsFromGSheet } from './api/getWordsFromGSheet';
+  import { generateWordSearchPuzzle } from './helpers/generateWordSearchPuzzle';
+
+  onMount(async () => {
+    // content here
+    // console.log(await getWordsFromGSheet());
+    // console.log(generateWordSearchPuzzle());
+  });
 </script>
 
 <header class="mb-3">
