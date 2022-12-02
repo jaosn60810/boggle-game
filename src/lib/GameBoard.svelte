@@ -1,10 +1,11 @@
 <script>
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { createEventDispatcher } from 'svelte';
 
   import { generateWordSearchPuzzle } from '../helpers/generateWordSearchPuzzle';
 
-  import wordsStore from '../stores/wordsStore';
+  import boggleGameWords from '../stores/boggleGameWords';
   import toastStore from '../stores/toastStore';
+  import wordsStore from '../stores/wordsStore';
 
   import ClickedLetters from './ClickedLetters.svelte';
   import GameBoardLetter from './GameBoardLetter.svelte';
@@ -21,6 +22,8 @@
       yCoordinate: Math.floor(index / boggleGame.settings.cols) + 1,
     }));
 
+  $boggleGameWords = boggleGame.data.words.map((word) => word.clean);
+
   console.log(boggleGame);
 
   let clickedLetterIndexArray = [];
@@ -32,6 +35,14 @@
     const word = clickedLettersArray.join('');
 
     if (!word) {
+      return;
+    }
+
+    if (word !== $boggleGameWords[0]) {
+      toastMessage = 'Wrong word!';
+      isSuccessToast = false;
+      clickedLetterIndexArray = [];
+      $toastStore.show();
       return;
     }
 
@@ -52,11 +63,15 @@
       return;
     }
 
-    console.log(data);
+    // console.log(data);
     isSuccessToast = true;
     toastMessage = 'Keep Going ~ 🚀';
     $toastStore.show();
     dispatch('resetTimer');
+    $boggleGameWords = $boggleGameWords.filter(
+      (gameWord) => gameWord !== word.toUpperCase()
+    );
+    dispatch('readNewWord');
     $wordsStore = [...$wordsStore, word];
     clickedLetterIndexArray = [];
   }
