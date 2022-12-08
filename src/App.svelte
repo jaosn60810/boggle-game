@@ -1,6 +1,8 @@
 <script>
   import { onMount } from 'svelte';
 
+  import { COUNT_DOWN } from './utilities/constants';
+
   import GameBoard from './lib/GameBoard.svelte';
   import NewGameButton from './lib/NewGameButton.svelte';
   import StartGameButton from './lib/StartGameButton.svelte';
@@ -15,7 +17,8 @@
   let timerRef;
   let gameBoardRef;
 
-  let countdown = 5;
+  const countdown = COUNT_DOWN;
+
   let startGame = false;
   let voices = [];
   let selectedVoice;
@@ -65,6 +68,7 @@
   <div class="row">
     <div class="col-md-6">
       <GameBoard
+        {startGame}
         bind:this={gameBoardRef}
         on:readNewWord={play}
         on:resetTimer={() => {

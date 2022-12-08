@@ -2,24 +2,12 @@
 
 import WordSearch from '@blex41/word-search/dist/wordsearch.min.js';
 
-const defaultOptions = {
-  cols: 4,
-  rows: 4,
-  disabledDirections: ['N', 'W', 'NW', 'SW'],
-  dictionary: ['Bus', 'Car', 'Taxi', 'day', 'sad', 'bad', 'red'],
-  // dictionary: ['Bus'],
-  maxWords: 20,
-  backwardsProbability: 0.3,
-  upperCase: true,
-  diacritics: true,
-};
-
-// export async function generateWordSearchPuzzle(options = defaultOptions) {
+// export async function generateWordSearchPuzzle(options) {
 //   // @ts-ignore
 //   options.dictionary = await getWordsFromGSheet();
 //   return new WordSearch(options);
 // }
 
-export function generateWordSearchPuzzle(options = defaultOptions) {
+export function generateWordSearchPuzzle(options) {
   return new WordSearch(options);
 }

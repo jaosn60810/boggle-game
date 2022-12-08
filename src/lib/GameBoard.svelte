@@ -3,6 +3,8 @@
 
   import { generateWordSearchPuzzle } from '../helpers/generateWordSearchPuzzle';
 
+  import { BOGGLE_GAME_DEFAULT_OPTIONS } from '../utilities/constants';
+
   import boggleGameWords from '../stores/boggleGameWords';
   import gameLivesStore from '../stores/gameLives';
   import toastItemsStore from '../stores/toastItemsStore';
@@ -11,17 +13,25 @@
 
   import ClickedLetters from './ClickedLetters.svelte';
   import GameBoardLetter from './GameBoardLetter.svelte';
+  import WordsTextarea from './WordsTextarea.svelte';
+
+  export let startGame;
 
   const dispatch = createEventDispatcher();
 
+  const boggleGameDefaultOptions = BOGGLE_GAME_DEFAULT_OPTIONS;
   let boggleGame;
   let clickedLetterIndexArray = [];
   let initialGoingDirection;
 
   generateBoggleGame();
 
-  export function generateBoggleGame() {
-    boggleGame = generateWordSearchPuzzle();
+  export function generateBoggleGame(...arg) {
+    if (arg[0]?.detail) {
+      boggleGameDefaultOptions.dictionary = arg[0].detail;
+    }
+
+    boggleGame = generateWordSearchPuzzle(boggleGameDefaultOptions);
     $boggleGameWords = boggleGame.data.words.map((word) => word.clean);
 
     console.log(boggleGame);
@@ -88,8 +98,8 @@
 
     if (clickedLetterIndexArray.length === 1) {
       initialGoingDirection = goingDirection(
-        boggleGameletters[clickedLetterIndexArray.at(-1)],
-        boggleGameletters[i]
+        boggleGameLetters[clickedLetterIndexArray.at(-1)],
+        boggleGameLetters[i]
       );
     }
 
@@ -97,6 +107,10 @@
   }
 
   function canClick(i) {
+    if (!startGame) {
+      return;
+    }
+
     //  first click always can click
     if (clickedLetterIndexArray.length === 0) {
       return true;
@@ -116,7 +130,7 @@
     }
 
     return clickedLetterIndexArray.some((letterIndex) =>
-      isConnectedSquares(boggleGameletters[letterIndex], boggleGameletters[i])
+      isConnectedSquares(boggleGameLetters[letterIndex], boggleGameLetters[i])
     );
   }
 
@@ -125,22 +139,22 @@
   }
 
   function isSecondClickAllowed(i) {
-    const secondtLetter = boggleGameletters[i];
-    const firstLetter = boggleGameletters[clickedLetterIndexArray.at(0)];
+    const secondLetter = boggleGameLetters[i];
+    const firstLetter = boggleGameLetters[clickedLetterIndexArray.at(0)];
 
-    const currentDirection = goingDirection(firstLetter, secondtLetter);
+    const currentDirection = goingDirection(firstLetter, secondLetter);
 
     return (
       boggleGame.settings.allowedDirections.includes(currentDirection) &&
-      isConnectedSquares(firstLetter, secondtLetter)
+      isConnectedSquares(firstLetter, secondLetter)
     );
   }
 
   function isCurrentDirectionSameAsInitialGoingDirection(i) {
     return (
       goingDirection(
-        boggleGameletters[clickedLetterIndexArray.at(-1)],
-        boggleGameletters[i]
+        boggleGameLetters[clickedLetterIndexArray.at(-1)],
+        boggleGameLetters[i]
       ) === initialGoingDirection
     );
   }
@@ -170,10 +184,10 @@
     clickedLetterIndexArray.find((item) => item === letterIndex) !== undefined;
 
   $: clickedLettersArray = clickedLetterIndexArray.map(
-    (clickedLetterIndex) => boggleGameletters[clickedLetterIndex].letter
+    (clickedLetterIndex) => boggleGameLetters[clickedLetterIndex].letter
   );
 
-  $: boggleGameletters = boggleGame.data.grid
+  $: boggleGameLetters = boggleGame.data.grid
     .reduce((acc, cur) => [...acc, ...cur], [])
     .map((word, index) => ({
       letter: word,
@@ -184,7 +198,7 @@
 
 <div class="d-flex flex-column align-items-center mb-3">
   <div class="gameboard mb-3">
-    {#each boggleGameletters as letterObject, i (`${letterObject}${i}`)}
+    {#each boggleGameLetters as letterObject, i (`${letterObject}${i}`)}
       <GameBoardLetter
         letter={letterObject.letter}
         active={isClicked(i)}
@@ -195,11 +209,23 @@
 
   <div class="d-flex justify-content-center align-items-center gap-2 gap-sm-3">
     <ClickedLetters {clickedLettersArray} />
-    <button type="button" class="btn btn-primary btn-lg" on:click={submitWord}>
+    <button
+      type="button"
+      class="btn btn-primary btn-lg"
+      on:click={submitWord}
+      disabled={!startGame}
+    >
       Submit
     </button>
   </div>
 </div>
+
+{#if !startGame}
+  <WordsTextarea
+    words={$boggleGameWords.join(' ')}
+    on:generateGame={generateBoggleGame}
+  />
+{/if}
 
 <style>
   .gameboard {
