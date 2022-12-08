@@ -1,17 +1,23 @@
 <script>
-  import { onMount } from 'svelte';
   import { Toast } from 'bootstrap';
+  import { onMount } from 'svelte';
 
-  import toastStore from '../stores/toastStore';
+  import toastItemsStore from '../stores/toastItemsStore';
+  import toastRefStore from '../stores/toastRefStore';
   import wordsStore from '../stores/wordsStore';
 
-  export let toastMessage = 'Keep Going ~ 🚀';
-  export let isSuccessToast = true;
+  let toastMessage;
+  let isSuccessToast;
 
   let toastLiveExample;
 
+  $: {
+    toastMessage = $toastItemsStore.toastMessage;
+    isSuccessToast = $toastItemsStore.isSuccessToast;
+  }
+
   onMount(() => {
-    $toastStore = new Toast(toastLiveExample);
+    $toastRefStore = new Toast(toastLiveExample);
   });
 </script>
 

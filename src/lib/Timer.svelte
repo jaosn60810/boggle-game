@@ -1,8 +1,9 @@
 <script>
-  import { createEventDispatcher, onDestroy } from 'svelte';
-  import { tweened } from 'svelte/motion';
+  import { createEventDispatcher, onDestroy, tick } from 'svelte';
   import { linear as easing } from 'svelte/easing';
+  import { tweened } from 'svelte/motion';
   import { fly } from 'svelte/transition';
+  import gameLivesStore from '../stores/gameLives';
 
   const dispatch = createEventDispatcher();
 
@@ -21,7 +22,16 @@
   }
 
   let interval = setInterval(updateTimer, 1000);
-  $: if (count === 0) clearInterval(interval);
+
+  $: if (count === 0) {
+    $gameLivesStore -= 1;
+
+    if ($gameLivesStore > 0) {
+      handleReset();
+    } else {
+      clearInterval(interval);
+    }
+  }
 
   let isPaused;
   let isResetting;
@@ -54,10 +64,14 @@
     isPaused = true;
   }
 
-  export function handleReset() {
+  export async function handleReset() {
     clearInterval(interval);
+
+    await tick();
+
     isResetting = true;
     isPaused = false;
+
     Promise.all([offset.set(1), rotation.set(360)]).then(() => {
       isResetting = false;
       now = Date.now();
@@ -159,20 +173,24 @@
 
 <style>
   .timer {
-    padding: 0rem 1rem;
+    /* padding: 0rem 1rem; */
+    width: 50%;
   }
 
   .timer > svg {
-    width: 50%;
+    /* width: 50%;
+    height: auto;
+    display: block; */
+    /* margin: 0 auto 2rem; */
+    width: 100%;
     height: auto;
     display: block;
-    margin: 0 auto 2rem;
   }
 
   div {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: flex-start;
+    justify-content: center;
   }
 
   /* @supports (display: grid) {

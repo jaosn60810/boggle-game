@@ -4,19 +4,18 @@
   import { generateWordSearchPuzzle } from '../helpers/generateWordSearchPuzzle';
 
   import boggleGameWords from '../stores/boggleGameWords';
-  import toastStore from '../stores/toastStore';
+  import gameLivesStore from '../stores/gameLives';
+  import toastItemsStore from '../stores/toastItemsStore';
+  import toastStore from '../stores/toastRefStore';
   import wordsStore from '../stores/wordsStore';
 
   import ClickedLetters from './ClickedLetters.svelte';
   import GameBoardLetter from './GameBoardLetter.svelte';
-  import ToastItem from './ToastItem.svelte';
 
   const dispatch = createEventDispatcher();
 
   let boggleGame;
   let clickedLetterIndexArray = [];
-  let toastMessage;
-  let isSuccessToast;
   let initialGoingDirection;
 
   generateBoggleGame();
@@ -24,51 +23,57 @@
   export function generateBoggleGame() {
     boggleGame = generateWordSearchPuzzle();
     $boggleGameWords = boggleGame.data.words.map((word) => word.clean);
+
     console.log(boggleGame);
   }
 
   async function submitWord() {
+    if ($gameLivesStore === 0) {
+      $toastItemsStore.toastMessage = `GAME OVER - 😥`;
+      $toastItemsStore.isSuccessToast = false;
+      $toastStore.show();
+      return;
+    }
+
     const word = clickedLettersArray.join('');
 
     if (!word) {
+      $toastItemsStore.toastMessage = `It's Empty!`;
+      $toastItemsStore.isSuccessToast = false;
+
+      $toastStore.show();
       return;
     }
 
     if (word !== $boggleGameWords[0]) {
-      toastMessage = 'Wrong word!';
-      isSuccessToast = false;
+      $toastItemsStore.toastMessage = 'Wrong word!';
+      $toastItemsStore.isSuccessToast = false;
       clickedLetterIndexArray = [];
       $toastStore.show();
       return;
     }
 
-    let data;
-    try {
-      data = await (
-        await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
-      ).json();
-    } catch (error) {
-      console.error(error);
-    }
-
-    if (data.message) {
-      toastMessage = data.message;
-      isSuccessToast = false;
-      clickedLetterIndexArray = [];
-      $toastStore.show();
-      return;
-    }
-
-    // console.log(data);
-    isSuccessToast = true;
-    toastMessage = 'Keep Going ~ 🚀';
+    $toastItemsStore.isSuccessToast = true;
+    $toastItemsStore.toastMessage = 'Keep Going ~ 🚀';
     $toastStore.show();
     dispatch('resetTimer');
     $boggleGameWords = $boggleGameWords.filter(
       (gameWord) => gameWord !== word.toUpperCase()
     );
-    dispatch('readNewWord');
+
     $wordsStore = [...$wordsStore, word];
+
+    if ($wordsStore.length === boggleGame.data.words.length) {
+      $toastItemsStore.toastMessage = `Well Done ! 🌞`;
+      $toastItemsStore.isSuccessToast = true;
+      $toastStore.show();
+      clickedLetterIndexArray = [];
+      dispatch('resetGame');
+      return;
+    }
+
+    dispatch('readNewWord');
+
     clickedLetterIndexArray = [];
   }
 
@@ -157,6 +162,10 @@
     }`;
   }
 
+  export function clearClickedLetterIndexArray() {
+    clickedLetterIndexArray = [];
+  }
+
   $: isClicked = (letterIndex) =>
     clickedLetterIndexArray.find((item) => item === letterIndex) !== undefined;
 
@@ -191,8 +200,6 @@
     </button>
   </div>
 </div>
-
-<ToastItem {toastMessage} {isSuccessToast} />
 
 <style>
   .gameboard {

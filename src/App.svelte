@@ -6,17 +6,17 @@
   import StartGameButton from './lib/StartGameButton.svelte';
   import SubmitWordList from './lib/SubmitWordList.svelte';
   import Timer from './lib/Timer.svelte';
+  import ToastItem from './lib/ToastItem.svelte';
 
   import boggleGameWords from './stores/boggleGameWords';
+  import gameLivesStore from './stores/gameLives';
   import wordsStore from './stores/wordsStore';
 
   let timerRef;
   let gameBoardRef;
 
-  let countdown = 15;
-
+  let countdown = 5;
   let startGame = false;
-
   let voices = [];
   let selectedVoice;
 
@@ -37,6 +37,8 @@
 
   function handleNewGame() {
     $wordsStore = [];
+    $gameLivesStore = 3;
+    gameBoardRef.clearClickedLetterIndexArray();
     gameBoardRef.generateBoggleGame();
     startGame = false;
   }
@@ -62,27 +64,29 @@
 <main class="container mb-3">
   <div class="row">
     <div class="col-md-6">
-      <div class="row">
-        <div class="col-md-6" />
-      </div>
-
       <GameBoard
         bind:this={gameBoardRef}
         on:readNewWord={play}
         on:resetTimer={() => {
           timerRef.handleReset();
         }}
+        on:resetGame={handleNewGame}
       />
     </div>
-    <div class="col-md-6">
+
+    <div class="col-md-6 ">
       {#if startGame}
-        <Timer
-          bind:this={timerRef}
-          on:new={() => {
-            countdown = null;
-          }}
-          {countdown}
-        />
+        <div class="d-flex align-items-center ">
+          <div class="d-flex justify-content-center gap-2 w-50">
+            {#each Array($gameLivesStore) as life}
+              <i class="bi bi-heart-fill fs-1 text-danger" />
+            {:else}
+              <span class="h1">GAME OVER</span>
+            {/each}
+          </div>
+
+          <Timer bind:this={timerRef} {countdown} />
+        </div>
       {/if}
 
       {#if $wordsStore.length}
@@ -97,3 +101,5 @@
     </div>
   </div>
 </main>
+
+<ToastItem />
