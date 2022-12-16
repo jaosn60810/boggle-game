@@ -26,6 +26,8 @@
   $: if (count === 0) {
     $gameLivesStore -= 1;
 
+    dispatch('readNewWord');
+
     if ($gameLivesStore > 0) {
       handleReset();
     } else {

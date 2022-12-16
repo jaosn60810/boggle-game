@@ -89,7 +89,7 @@
             {/each}
           </div>
 
-          <Timer bind:this={timerRef} {countdown} />
+          <Timer bind:this={timerRef} {countdown} on:readNewWord={play} />
         </div>
       {/if}
 
