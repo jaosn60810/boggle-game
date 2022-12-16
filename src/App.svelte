@@ -26,7 +26,7 @@
   function play() {
     speechSynthesis.cancel();
     let utterance = new SpeechSynthesisUtterance($boggleGameWords[0]);
-    utterance.rate = 1;
+    utterance.rate = 0.7;
     utterance.pitch = 1;
     utterance.voice = selectedVoice;
     utterance.volume = 1;

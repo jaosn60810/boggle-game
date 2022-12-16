@@ -106,6 +106,10 @@
     clickedLetterIndexArray = [...clickedLetterIndexArray, i];
   }
 
+  function clearLetter() {
+    clickedLetterIndexArray = [];
+  }
+
   function canClick(i) {
     if (!startGame) {
       return;
@@ -216,6 +220,14 @@
       disabled={!startGame}
     >
       Submit
+    </button>
+    <button
+      type="button"
+      class="btn  btn-warning btn-lg"
+      on:click={clearLetter}
+      disabled={!startGame}
+    >
+      Clear
     </button>
   </div>
 </div>
