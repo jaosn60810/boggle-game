@@ -211,8 +211,9 @@
     {/each}
   </div>
 
+  <ClickedLetters {clickedLettersArray} />
+
   <div class="d-flex justify-content-center align-items-center gap-2 gap-sm-3">
-    <ClickedLetters {clickedLettersArray} />
     <button
       type="button"
       class="btn btn-primary btn-lg"

@@ -60,9 +60,11 @@
   });
 </script>
 
-<header class="mb-3">
-  <h1 class="text-center">Boggle Game</h1>
-</header>
+{#if !startGame}
+  <header class="mb-3">
+    <h1 class="text-center">Boggle Game</h1>
+  </header>
+{/if}
 
 <main class="container mb-3">
   <div class="row">
@@ -80,13 +82,24 @@
 
     <div class="col-md-6 ">
       {#if startGame}
-        <div class="d-flex align-items-center ">
-          <div class="d-flex justify-content-center gap-2 w-50">
-            {#each Array($gameLivesStore) as life}
-              <i class="bi bi-heart-fill fs-1 text-danger" />
-            {:else}
-              <span class="h1">GAME OVER</span>
-            {/each}
+        <div class="d-flex justify-content-between align-items-center ">
+          <div>
+            <div class="d-flex justify-content-center gap-2 mb-3">
+              {#each Array($gameLivesStore) as life}
+                <i class="bi bi-heart-fill fs-1 text-danger" />
+              {:else}
+                <span class="h1">GAME OVER</span>
+              {/each}
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-info btn-lg"
+              on:click={play}
+              disabled={!startGame}
+            >
+              Play Again
+            </button>
           </div>
 
           <Timer bind:this={timerRef} {countdown} on:readNewWord={play} />
@@ -100,7 +113,9 @@
       {#if !startGame}
         <StartGameButton on:click={handleStartGame} />
       {:else}
-        <NewGameButton on:click={handleNewGame} />
+        <div class="d-flex justify-content-center mt-5">
+          <NewGameButton on:click={handleNewGame} />
+        </div>
       {/if}
     </div>
   </div>
