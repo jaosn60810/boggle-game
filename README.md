@@ -39,11 +39,11 @@
 
 1. How to user [SpeechSynthesis API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis) in Svelte
 
-[Svelte App - Speech Synthesis Api](https://www.youtube.com/watch?v=XDdKWOqCcZk&ab_channel=NoahGlaser)
+   [Svelte App - Speech Synthesis Api](https://www.youtube.com/watch?v=XDdKWOqCcZk&ab_channel=NoahGlaser)
 
 2. Timer component
 
-[Svelte App - Countdown App](https://svelte.dev/repl/a19df6f013434e01bb990349843af288?version=3.38.2)
+   [Svelte App - Countdown App](https://svelte.dev/repl/a19df6f013434e01bb990349843af288?version=3.38.2)
 
 3. [Word search puzzle generator](https://www.npmjs.com/package/@blex41/word-search)
 
