@@ -1,3 +1,5 @@
+# [Demo](https://creative-croissant-a105c3.netlify.app)
+
 # How to play
 
 0. If the player want to change the words in the boggle game, change the words in the textarea and press the "Generate" button
@@ -26,8 +28,6 @@
 
 8. When the player has run out of lives, game over
    ![image](https://user-images.githubusercontent.com/26405746/209469562-46fe53ee-0323-4ec3-aed2-46240228a45e.png)
-
-# [Demo](https://creative-croissant-a105c3.netlify.app)
 
 # API Reference
 
