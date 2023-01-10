@@ -64,7 +64,6 @@ export function playLetter(letter) {
 }
 
 export function playJingle1() {
-  console.log('test');
   jingle1.play();
 }
 
@@ -77,7 +76,7 @@ export function playJingle3() {
 
 export function playWord(url) {
   let word = new Howl({
-    src: [new URL(url, import.meta.url).href],
+    src: [url],
   });
   word.play();
 }
