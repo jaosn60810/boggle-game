@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
 
-  import { COUNT_DOWN } from './utilities/constants';
+  import { COUNT_DOWN, WORDS_LIST } from './utilities/constants';
 
   import GameBoard from './lib/GameBoard.svelte';
   import NewGameButton from './lib/NewGameButton.svelte';
@@ -14,6 +14,13 @@
   import gameLivesStore from './stores/gameLives';
   import wordsStore from './stores/wordsStore';
 
+  import {
+    findWordAudioUrl,
+    playJingle1,
+    playWord,
+  } from './helpers/audioPlayer';
+  import { delay } from './helpers/time';
+
   let timerRef;
   let gameBoardRef;
 
@@ -23,7 +30,7 @@
   let voices = [];
   let selectedVoice;
 
-  function play() {
+  function playBrowserSpeaker() {
     speechSynthesis.cancel();
     let utterance = new SpeechSynthesisUtterance($boggleGameWords[0]);
     utterance.rate = 0.7;
@@ -33,9 +40,16 @@
     speechSynthesis.speak(utterance);
   }
 
-  function handleStartGame() {
+  function playLocalAudio() {
+    const wordUrl = findWordAudioUrl(WORDS_LIST, $boggleGameWords[0]);
+    playWord(wordUrl);
+  }
+
+  async function handleStartGame() {
     startGame = true;
-    play();
+    playJingle1();
+    await delay(1000);
+    playLocalAudio();
   }
 
   function handleNewGame() {
@@ -72,7 +86,7 @@
       <GameBoard
         {startGame}
         bind:this={gameBoardRef}
-        on:readNewWord={play}
+        on:readNewWord={playLocalAudio}
         on:resetTimer={() => {
           timerRef.handleReset();
         }}
@@ -95,14 +109,18 @@
             <button
               type="button"
               class="btn btn-info btn-lg"
-              on:click={play}
+              on:click={playLocalAudio}
               disabled={!startGame}
             >
               Play Again
             </button>
           </div>
 
-          <Timer bind:this={timerRef} {countdown} on:readNewWord={play} />
+          <Timer
+            bind:this={timerRef}
+            {countdown}
+            on:readNewWord={playLocalAudio}
+          />
         </div>
       {/if}
 

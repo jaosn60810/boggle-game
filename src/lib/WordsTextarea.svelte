@@ -2,7 +2,7 @@
   import { createEventDispatcher } from 'svelte';
 
   import { BOGGLE_GAME_DEFAULT_OPTIONS } from '../utilities/constants';
-  import { removeSameWords, splitByWhitespace } from '../utilities/stringUtils';
+  import { removeSameWords, splitByWhitespace } from '../helpers/stringHelpers';
 
   export let words;
 

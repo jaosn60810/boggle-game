@@ -1,8 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
 
-  import { generateWordSearchPuzzle } from '../helpers/generateWordSearchPuzzle';
-
   import { BOGGLE_GAME_DEFAULT_OPTIONS } from '../utilities/constants';
 
   import boggleGameWords from '../stores/boggleGameWords';
@@ -14,6 +12,10 @@
   import ClickedLetters from './ClickedLetters.svelte';
   import GameBoardLetter from './GameBoardLetter.svelte';
   import WordsTextarea from './WordsTextarea.svelte';
+
+  import { playJingle2, playJingle3 } from '../helpers/audioPlayer';
+  import { generateWordSearchPuzzle } from '../helpers/generateWordSearchPuzzle';
+  import { delay } from '../helpers/time';
 
   export let startGame;
 
@@ -41,6 +43,10 @@
     if ($gameLivesStore === 0) {
       $toastItemsStore.toastMessage = `GAME OVER - 😥`;
       $toastItemsStore.isSuccessToast = false;
+
+      playJingle2();
+      await delay(1000);
+
       $toastStore.show();
       return;
     }
@@ -51,6 +57,9 @@
       $toastItemsStore.toastMessage = `It's Empty!`;
       $toastItemsStore.isSuccessToast = false;
 
+      playJingle2();
+      await delay(1000);
+
       $toastStore.show();
       return;
     }
@@ -58,13 +67,21 @@
     if (word !== $boggleGameWords[0]) {
       $toastItemsStore.toastMessage = 'Wrong word!';
       $toastItemsStore.isSuccessToast = false;
-      clickedLetterIndexArray = [];
+
+      playJingle2();
+      await delay(1000);
+
       $toastStore.show();
+      clickedLetterIndexArray = [];
       return;
     }
 
     $toastItemsStore.isSuccessToast = true;
     $toastItemsStore.toastMessage = 'Keep Going ~ 🚀';
+
+    playJingle3();
+    await delay(1000);
+
     $toastStore.show();
     dispatch('resetTimer');
     $boggleGameWords = $boggleGameWords.filter(
